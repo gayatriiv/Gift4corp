@@ -43,6 +43,10 @@ const Collection = () => {
          const applyFilter=()=>{
         let productsCopy= products.slice();
 
+        // Filter to show only Men, Women, Kids categories
+        productsCopy = productsCopy.filter(item => 
+          item.category === 'Men' || item.category === 'Women' || item.category === 'Kids'
+        );
 
         if(showSearch && search){
          productsCopy=productsCopy.filter(item=> item.name.toLowerCase().includes(search.toLowerCase()));

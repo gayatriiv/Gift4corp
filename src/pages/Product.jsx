@@ -66,7 +66,9 @@ useEffect(() => {
        <p  className='mt-5 text-3xl font-medium'>{currency}{productData.price}</p>
         <p className='text-sm text-gray-500 line-through '>M.R.P: {currency}{productData.Mrpprice}</p>
       <p className='mt-5 text-gray-500 md:w'>{productData.description}</p>
-      <div className='flex flex-col gap-4 my-8'>
+      {/* Only show size selector for Men, Women, Kids categories */}
+      {(productData.category === 'Men' || productData.category === 'Women' || productData.category === 'Kids') && (
+        <div className='flex flex-col gap-4 my-8'>
           <p>Select Size</p>
           <div className='flex gap-2'>
             {
@@ -77,9 +79,10 @@ useEffect(() => {
               ))
             }
           </div>
-      </div>
+        </div>
+      )}
 
-      <button onClick={()=>addToCart(productData._id ,size)} className='bg-black text-white px-8 py-3 text-sm active:bg-gray-700'>Add to Cart</button>
+      <button onClick={()=>addToCart(productData._id, (productData.category === 'Men' || productData.category === 'Women' || productData.category === 'Kids') ? size : '')} className='bg-black text-white px-8 py-3 text-sm active:bg-gray-700'>Add to Cart</button>
       <hr className='mt-8 sm:w-4/5 ' />
       <div className='text-sm text-gray-500 mt-5 flex flex-col gap-1 '
       >

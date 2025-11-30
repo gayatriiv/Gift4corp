@@ -2,7 +2,10 @@ import React from 'react'
 import { assets } from '../assets/assets'
 
 const Footer = () => {
+
+
   return (
+    
     <div className=''>
         <div className='flex flex-col sm:grid grid-cols-[3fr_1fr_1fr] gap-14 my-10 mt-40 text-sm '>
            <div >
@@ -37,7 +40,6 @@ Gifts4Corporate is a leading provider of Branded merchandise, Custom uniform sol
         <div className=''>
                <hr />
                   <p className='py-5 text-sm text-center'> Copright 2025@ Gift4corp </p>
-
         </div>
     </div>
   )

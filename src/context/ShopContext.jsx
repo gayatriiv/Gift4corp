@@ -27,24 +27,20 @@ const ShopContextProvider=(props)=>{
    
     const addToCart = async (itemId,size)=>{
           let cartData=structuredClone(cartItems);
-          if(!size){
-           toast.error("please select size");
-            return;
-          }
-   
-
-
-
+          
+          // If size is not provided (for non-clothing items), use 'default' as the size key
+          const sizeKey = size || 'default';
+          
           if(cartData[itemId]){
-            if(cartData[itemId][size]){
-              cartData[itemId][size]+=1;
+            if(cartData[itemId][sizeKey]){
+              cartData[itemId][sizeKey]+=1;
             }else{
-               cartData[itemId][size]=1;  
+               cartData[itemId][sizeKey]=1;  
             }
     }
     else{
          cartData[itemId]={};
-            cartData[itemId][size]=1;
+            cartData[itemId][sizeKey]=1;
     }
 
     setCartItems(cartData);
@@ -52,7 +48,7 @@ const ShopContextProvider=(props)=>{
 
     if(token){
       try{
-        await axios.post(backendURL+'/api/cart/add',{itemId,size},{headers:{token}});
+        await axios.post(backendURL+'/api/cart/add',{itemId,size: sizeKey},{headers:{token}});
 
       }catch(err){
         console.log(err);

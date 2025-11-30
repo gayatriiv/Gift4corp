@@ -81,7 +81,7 @@ import cross_icon from './cross_icon.png'
 import jack2 from './jack2.png'
 import jack3 from './jack3.png'
 import jack4 from './jack4.png'
-
+import image from './image.png'
 export const assets = {
     logo,
     hero_img,
@@ -100,7 +100,8 @@ export const assets = {
     contact_img,
     razorpay_logo,
     stripe_logo,
-    cross_icon
+    cross_icon,
+    image
 }
 
 export const products = [
