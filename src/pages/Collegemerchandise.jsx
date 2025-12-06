@@ -4,16 +4,20 @@ import { assets } from '../assets/assets';
 import Title from '../Components/Title';
 import Productitem from '../Components/Productitem';
 import axios from 'axios';
+import { useSearchParams } from 'react-router-dom';
 
 const Collegemerchandise = () => {
 
   const { products, search, showSearch } = useContext(ShopContext);
   const backendURL = import.meta.env.VITE_BACKEND_URL;
+  const [searchParams] = useSearchParams();
 
   const [showFilter, setShowFilter] = useState(false);
   const [filteredProducts, setFilteredProducts] = useState([]);
   const [merchandiseList, setMerchandiseList] = useState([]);
   const [selectedMerchandise, setSelectedMerchandise] = useState([]);
+  const [selectedColors, setSelectedColors] = useState([]);
+  const [availableColors, setAvailableColors] = useState([]);
   const [sortType, setSortType] = useState('relevant');
 
   // Fetch college merchandise list
@@ -28,6 +32,14 @@ const Collegemerchandise = () => {
     }
   };
 
+  // Check URL parameter on mount and update selected merchandise
+  useEffect(() => {
+    const merchandiseParam = searchParams.get('merchandise');
+    if (merchandiseParam) {
+      setSelectedMerchandise([merchandiseParam]);
+    }
+  }, [searchParams]);
+
   // Toggle merchandise filter
   const toggleMerchandise = (e) => {
     const value = e.target.value;
@@ -36,6 +48,65 @@ const Collegemerchandise = () => {
     } else {
       setSelectedMerchandise(prev => [...prev, value]);
     }
+  };
+
+  // Toggle color filter
+  const toggleColor = (e) => {
+    const value = e.target.value;
+    if (selectedColors.includes(value)) {
+      setSelectedColors(prev => prev.filter(item => item !== value));
+    } else {
+      setSelectedColors(prev => [...prev, value]);
+    }
+  };
+
+  // Extract colors from product names
+  const extractColors = () => {
+    const colorMap = {
+      'Black': '#000000',
+      'White': '#FFFFFF',
+      'Red': '#FF0000',
+      'Blue': '#0000FF',
+      'Green': '#008000',
+      'Yellow': '#FFFF00',
+      'Orange': '#FFA500',
+      'Purple': '#800080',
+      'Pink': '#FFC0CB',
+      'Grey': '#808080',
+      'Gray': '#808080',
+      'Brown': '#A52A2A',
+      'Navy': '#000080',
+      'Maroon': '#800000',
+      'Beige': '#F5F5DC',
+      'Cream': '#FFFDD0',
+      'Gold': '#FFD700',
+      'Silver': '#C0C0C0',
+      'Olive': '#808000',
+      'Teal': '#008080',
+      'Cyan': '#00FFFF',
+      'Magenta': '#FF00FF',
+      'Violet': '#EE82EE',
+      'Indigo': '#4B0082'
+    };
+
+    const colorsFound = [];
+
+    Object.keys(colorMap).forEach(colorName => {
+      const hasColor = products.some(product => {
+        if (product.collegeMerchandise && 
+            product.collegeMerchandise.toLowerCase() !== 'none' && 
+            product.collegeMerchandise.trim() !== '') {
+          return product.name.toLowerCase().includes(colorName.toLowerCase());
+        }
+        return false;
+      });
+
+      if (hasColor) {
+        colorsFound.push({ name: colorName, hex: colorMap[colorName] });
+      }
+    });
+
+    setAvailableColors(colorsFound);
   };
 
   // Apply filters
@@ -63,6 +134,16 @@ const Collegemerchandise = () => {
       );
     }
 
+    // Filter by selected colors
+    if (selectedColors.length > 0) {
+      productsCopy = productsCopy.filter(item => {
+        const productName = item.name.toLowerCase();
+        return selectedColors.some(color => 
+          productName.includes(color.toLowerCase())
+        );
+      });
+    }
+
     setFilteredProducts(productsCopy);
   };
 
@@ -88,10 +169,17 @@ const Collegemerchandise = () => {
     fetchMerchandiseList();
   }, []);
 
+  // Extract colors when products change
+  useEffect(() => {
+    if (products.length > 0) {
+      extractColors();
+    }
+  }, [products]);
+
   // Apply filter when dependencies change
   useEffect(() => {
     applyFilter();
-  }, [selectedMerchandise, search, showSearch, products]);
+  }, [selectedMerchandise, selectedColors, search, showSearch, products]);
 
   // Sort when sort type changes
   useEffect(() => {
@@ -127,6 +215,53 @@ const Collegemerchandise = () => {
               ))
             ) : (
               <p className='text-gray-400 italic'>No merchandise available</p>
+            )}
+          </div>
+        </div>
+
+        {/* Color Filter */}
+        <div className={`border border-gray-300 pl-5 py-3 my-6 ${showFilter ? '' : 'hidden'} sm:block`}>
+          <p className='mb-3 text-sm font-medium'>COLORS</p>
+          <div className='grid grid-cols-4 gap-3 pr-5'>
+            {availableColors.length > 0 ? (
+              availableColors.map((colorObj, index) => (
+                <div key={index} className='flex flex-col items-center gap-1'>
+                  <button
+                    onClick={() => {
+                      const event = { target: { value: colorObj.name } };
+                      toggleColor(event);
+                    }}
+                    className={`w-10 h-10 rounded-full border-2 transition-all duration-200 hover:scale-110 ${
+                      selectedColors.includes(colorObj.name) 
+                        ? 'border-black ring-2 ring-offset-2 ring-black' 
+                        : 'border-gray-300 hover:border-gray-500'
+                    }`}
+                    style={{ 
+                      backgroundColor: colorObj.hex,
+                      boxShadow: colorObj.name === 'White' ? 'inset 0 0 0 1px #e5e7eb' : 'none'
+                    }}
+                    title={colorObj.name}
+                  >
+                    {selectedColors.includes(colorObj.name) && (
+                      <svg 
+                        xmlns="http://www.w3.org/2000/svg" 
+                        className="h-5 w-5 mx-auto" 
+                        fill="none" 
+                        viewBox="0 0 24 24" 
+                        stroke={colorObj.name === 'White' || colorObj.name === 'Yellow' || colorObj.name === 'Cream' || colorObj.name === 'Beige' ? 'black' : 'white'}
+                        strokeWidth={3}
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+                      </svg>
+                    )}
+                  </button>
+                  <span className='text-[10px] text-center text-gray-600 leading-tight'>
+                    {colorObj.name}
+                  </span>
+                </div>
+              ))
+            ) : (
+              <p className='text-gray-400 italic col-span-4 text-sm'>No colors found</p>
             )}
           </div>
         </div>

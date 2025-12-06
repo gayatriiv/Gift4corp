@@ -13,7 +13,9 @@ import CategoryShowcase from '../Components/CategoryShowcase'
 const Home = () => {
   return (
     <div>
-      <Hero/>
+      <div className='mx-2 sm:mx-4 md:mx-8'>
+        <Hero/>
+      </div>
       <CategoryShowcase/>
       <FeaturedSlider/>
       <Categoryslider/>

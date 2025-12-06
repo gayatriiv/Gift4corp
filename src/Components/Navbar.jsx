@@ -1,13 +1,33 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { assets } from '../assets/assets.js'
 import { Link, NavLink } from 'react-router-dom'
 import { ShopContext } from '../context/ShopContext.jsx';
+import axios from 'axios';
 
 const Navbar = () => {
 
   const [visible, setVisible] = useState(false);
+  const [merchandiseList, setMerchandiseList] = useState([]);
+  const [showMerchandiseDropdown, setShowMerchandiseDropdown] = useState(false);
 
   const { setShowSearch, getCartCount, navigate, token, setToken, setCartItems } = useContext(ShopContext);
+  const backendURL = import.meta.env.VITE_BACKEND_URL;
+
+  // Fetch college merchandise list
+  const fetchMerchandiseList = async () => {
+    try {
+      const response = await axios.get(backendURL + '/api/college-merchandise/list');
+      if (response.data.success) {
+        setMerchandiseList(response.data.merchandises.filter(item => item.isActive));
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchMerchandiseList();
+  }, []);
 
 
   const logout = () => {
@@ -50,14 +70,47 @@ const Navbar = () => {
 
 
         </NavLink>
-        <NavLink to='/CollegeMerchandise' className='flex flex-col items-center gap-1'>
-          <p>
-            College Merchandise
-          </p>
-          <hr className='w-2/4 border-none h-[1.5px] bg-gray-700 hidden' />
-
-
-        </NavLink>
+        <div 
+          className='relative group'
+          onMouseEnter={() => setShowMerchandiseDropdown(true)}
+          onMouseLeave={() => setShowMerchandiseDropdown(false)}
+        >
+          <NavLink to='/CollegeMerchandise' className='flex flex-col items-center gap-1'>
+            <p className='flex items-center gap-1'>
+              College Merchandise
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+              </svg>
+            </p>
+            <hr className='w-2/4 border-none h-[1.5px] bg-gray-700 hidden' />
+          </NavLink>
+          
+          {/* Dropdown Menu */}
+          {showMerchandiseDropdown && merchandiseList.length > 0 && (
+            <div className='absolute left-0 top-full pt-4 z-50'>
+              <div className='bg-white shadow-lg rounded-lg py-3 px-2 min-w-[200px] max-h-[400px] overflow-y-auto'>
+                <Link 
+                  to='/CollegeMerchandise'
+                  className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors'
+                  onClick={() => setShowMerchandiseDropdown(false)}
+                >
+                  <span className='font-semibold'>All Merchandise</span>
+                </Link>
+                <hr className='my-2' />
+                {merchandiseList.map((merchandise) => (
+                  <Link
+                    key={merchandise._id}
+                    to={`/CollegeMerchandise?merchandise=${encodeURIComponent(merchandise.name)}`}
+                    className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors'
+                    onClick={() => setShowMerchandiseDropdown(false)}
+                  >
+                    {merchandise.name}
+                  </Link>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
         <NavLink to='/Contact' className='flex flex-col items-center gap-1'>
           <p>
             Contact
