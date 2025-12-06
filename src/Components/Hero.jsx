@@ -1,28 +1,109 @@
-import React from 'react'
-import { assets } from '../assets/assets'
+// import React from 'react'
+// import { assets } from '../assets/assets'
+
+// const Hero = () => {
+//   return (
+//     <div className='flex flex-col sm:flex-row border border-gray-400'>
+//           {/* hero Left Section */}
+         
+
+//             {/* hero Right Section */}
+//             <img src={assets.hero_img} alt=""  className='w-full sm:w-1/2'/>
+
+
+//              <div className='w-full sm:w-1/2 flex items-center justify-center py-10 sm:py-0 '> 
+//                    <div className='text-[#414141]'> 
+//                         <div className='flex items-center gap-2'>
+//                        <p className='w-8 md:w-11 h-[2px] bg-[#414141]'></p>
+//                        <p className='font-medium text-sm md:text-base'> OUR BESTSELLERS</p>
+//                         </div>
+//                            <h1 className=' prata-regular text-3xl sm:py-3 lg:text-5xl leading-relaxed '>Lastest</h1>
+//                            <div className='flex items-center gap-2 '>
+//                             <p className='font-semibold text-sm md:text-base '>SHOP NOW</p>
+//                             <p className='w-8 md:w-11 h-[2px] bg-[#414141]'></p>
+//                            </div>
+//                    </div>
+//           </div>
+//     </div>
+//   )
+// }
+
+// export default Hero
+
+import { useEffect, useState } from "react";
+import { assets } from "../assets/assets"; // Fixed: changed to named import
 
 const Hero = () => {
+  const slides = [
+    {
+      image: assets.hero_img,
+      badge: "OUR BESTSELLERS",
+      title: "Latest Arrivals",
+      cta: "SHOP NOW"
+    },
+    {
+      image: assets.hero_img2,
+      badge: "TRENDING NOW",
+      title: "College Essentials",
+      cta: "EXPLORE MORE"
+    },
+    {
+      image: assets.hero_img3,
+      badge: "NEW COLLECTION",
+      title: "Premium Quality",
+      cta: "DISCOVER NOW"
+    }
+  ];
+
+  const [currentIndex, setCurrentIndex] = useState(0);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) =>
+        prev === slides.length - 1 ? 0 : prev + 1
+      );
+    }, 2000); // 2 seconds
+
+    return () => clearInterval(interval);
+  }, []);
+
   return (
     <div className='flex flex-col sm:flex-row border border-gray-400'>
-          {/* hero Left Section */}
-          <div className='w-full sm:w-1/2 flex items-center justify-center py-10 sm:py-0 '> 
-                   <div className='text-[#414141]'> 
-                        <div className='flex items-center gap-2'>
-                       <p className='w-8 md:w-11 h-[2px] bg-[#414141]'></p>
-                       <p className='font-medium text-sm md:text-base'> OUR BESTSELLERS</p>
-                        </div>
-                           <h1 className=' prata-regular text-3xl sm:py-3 lg:text-5xl leading-relaxed '>Lastest</h1>
-                           <div className='flex items-center gap-2 '>
-                            <p className='font-semibold text-sm md:text-base '>SHOP NOW</p>
-                            <p className='w-8 md:w-11 h-[2px] bg-[#414141]'></p>
-                           </div>
-                   </div>
+      
+
+      {/* Hero Left Section - Text */}
+      <div className='w-full sm:w-1/2 flex items-center justify-center py-10 sm:py-0'> 
+        <div className='text-[#414141]'> 
+          <div className='flex items-center gap-2'>
+            <p className='w-8 md:w-11 h-[2px] bg-[#414141]'></p>
+            <p className='font-medium text-sm md:text-base transition-all duration-700'>
+              {slides[currentIndex].badge}
+            </p>
           </div>
 
-            {/* hero Right Section */}
-            <img src={assets.hero_img} alt=""  className='w-full sm:w-1/2'/>
-    </div>
-  )
-}
+          <h1 className='prata-regular text-3xl sm:py-3 lg:text-5xl leading-relaxed transition-all duration-700'>
+            {slides[currentIndex].title}
+          </h1>
 
-export default Hero
+          <div className='flex items-center gap-2'>
+            <p className='font-semibold text-sm md:text-base transition-all duration-700'>
+              {slides[currentIndex].cta}
+            </p>
+            <p className='w-8 md:w-11 h-[2px] bg-[#414141]'></p>
+          </div>
+        </div>
+      </div>
+
+      
+      {/* Hero Right Section - Image */}
+      <img
+        src={slides[currentIndex].image}
+        alt="hero"
+        className='w-full sm:w-1/2 transition-all duration-700'
+      />
+
+    </div>
+  );
+};
+
+export default Hero;

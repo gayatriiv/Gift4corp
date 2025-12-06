@@ -8,11 +8,13 @@ import FeaturedSlider from '../Components/FeaturedSlider'
 import WhyChooseUs from '../Components/WhyChooseUs'
 import Categoryslider from '../Components/Categoryslider'
 import ProductRating from '../Components/ProductRating'
+import CategoryShowcase from '../Components/CategoryShowcase'
 
 const Home = () => {
   return (
     <div>
       <Hero/>
+      <CategoryShowcase/>
       <FeaturedSlider/>
       <Categoryslider/>
       {/* <LastestCollection/> */}
