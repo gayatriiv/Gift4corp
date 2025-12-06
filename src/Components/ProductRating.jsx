@@ -105,7 +105,7 @@ const ProductRating = () => {
   }
 
   return (
-    <div className='my-16 px-4'>
+    <div className='my-16 px-4 py-12 bg-section-bg rounded-2xl'>
       <div className='text-center py-8 text-3xl'>
         <Title text1={'CUSTOMER'} text2={'REVIEWS'} />
         <p className='w-3/4 m-auto text-xs sm:text-sm md:text-base text-gray-600'>

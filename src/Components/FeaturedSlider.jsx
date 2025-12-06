@@ -29,7 +29,7 @@ const FeaturedSlider = () => {
   }
 
   return (
-    <div className="flex flex-col md:flex-row items-center justify-between my-16 px-4 md:px-12">
+    <div className="flex flex-col md:flex-row items-center justify-between my-16 px-4 md:px-12 py-12 bg-section-bg rounded-2xl">
       
       {/* Left Text */}
       <div className="md:w-1/2 space-y-4">

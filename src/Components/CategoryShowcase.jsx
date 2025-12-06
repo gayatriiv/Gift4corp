@@ -30,7 +30,7 @@ const CategoryShowcase = () => {
   ]
 
   return (
-    <div className='my-16 px-4'>
+    <div className='my-16 px-4 py-12 bg-section-bg rounded-2xl'>
       <div className='grid grid-cols-1 md:grid-cols-3 gap-6 max-w-7xl mx-auto'>
         {categories.map((category) => (
           <Link 

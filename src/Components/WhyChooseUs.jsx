@@ -12,7 +12,7 @@ const items = [
 
 const WhyChooseUs = () => {
   return (
-    <div className="my-20 px-4 md:px-12">
+    <div className="my-20 px-4 md:px-12 py-12 bg-section-bg rounded-2xl">
       <h2 className="text-center text-3xl font-semibold mb-3">
         Why <span className="text-red-500">Choose Us?</span>
       </h2>
