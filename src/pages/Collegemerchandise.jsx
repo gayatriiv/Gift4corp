@@ -25,7 +25,14 @@ const Collegemerchandise = () => {
     try {
       const response = await axios.get(backendURL + '/api/college-merchandise/list');
       if (response.data.success) {
-        setMerchandiseList(response.data.merchandises.filter(item => item.isActive));
+        // Filter out inactive items and those with empty/None names
+        const filteredList = response.data.merchandises.filter(item => 
+          item.isActive && 
+          item.name && 
+          item.name.trim() !== '' && 
+          item.name.toLowerCase() !== 'none'
+        );
+        setMerchandiseList(filteredList);
       }
     } catch (error) {
       console.log(error);
@@ -298,7 +305,8 @@ const Collegemerchandise = () => {
                 id={item._id} 
                 price={item.price} 
                 Mrpprice={item.Mrpprice} 
-                image={item.image} 
+                image={item.image}
+                quantity={item.quantity} 
               />
             ))
           ) : (

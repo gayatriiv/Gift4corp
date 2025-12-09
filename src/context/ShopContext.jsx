@@ -26,10 +26,35 @@ const ShopContextProvider=(props)=>{
      const navigate=useNavigate();
    
     const addToCart = async (itemId,size)=>{
+          // Find the product to check available quantity
+          const product = products.find(p => p._id === itemId);
+          
+          if(!product){
+            toast.error("Product not found");
+            return;
+          }
+          
+          if(product.quantity === 0){
+            toast.error("Product is out of stock");
+            return;
+          }
+          
           let cartData=structuredClone(cartItems);
           
           // If size is not provided (for non-clothing items), use 'default' as the size key
           const sizeKey = size || 'default';
+          
+          // Calculate current quantity in cart for this item
+          let currentQuantity = 0;
+          if(cartData[itemId] && cartData[itemId][sizeKey]){
+            currentQuantity = cartData[itemId][sizeKey];
+          }
+          
+          // Check if adding one more would exceed available stock
+          if(currentQuantity >= product.quantity){
+            toast.error(`Only ${product.quantity} items available in stock`);
+            return;
+          }
           
           if(cartData[itemId]){
             if(cartData[itemId][sizeKey]){
@@ -80,6 +105,20 @@ try{
 
 
  const updateQuantity=async(itemId,size,quantity)=>{
+      // Find the product to check available quantity
+      const product = products.find(p => p._id === itemId);
+      
+      if(!product){
+        toast.error("Product not found");
+        return;
+      }
+      
+      // Validate quantity against available stock
+      if(quantity > product.quantity){
+        toast.error(`Only ${product.quantity} items available in stock`);
+        return;
+      }
+      
       let cartData=structuredClone(cartItems);
           
       cartData[itemId][size]=quantity;

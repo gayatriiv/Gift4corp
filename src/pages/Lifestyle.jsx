@@ -73,6 +73,7 @@ const Lifestyle = () => {
               name={item.name} 
               price={item.price} 
               Mrpprice={item.Mrpprice}
+              quantity={item.quantity}
             />
           ))}
         </div>

@@ -15,6 +15,8 @@ const Collection = () => {
 
      const [category,setcategory]=useState([]);
      const [subCategory,setSubCategory]=useState([]);
+     const [selectedColors,setSelectedColors]=useState([]);
+     const [availableColors,setAvailableColors]=useState([]);
      const [sortType,setSortType]=useState('relavent');
 
      const toggleCategory=(e)=>{
@@ -40,12 +42,22 @@ const Collection = () => {
         }
 
       }
+
+      const toggleColor = (color) => {
+        if(selectedColors.includes(color)){
+          setSelectedColors(prev => prev.filter(item => item !== color));
+        }
+        else{
+          setSelectedColors(prev => [...prev, color]);
+        }
+      }
+
          const applyFilter=()=>{
         let productsCopy= products.slice();
 
-        // Filter to show only Men, Women, Kids categories
+        // Filter to show only Apparels category and skip products without college merchandise
         productsCopy = productsCopy.filter(item => 
-          item.category === 'Men' || item.category === 'Women' || item.category === 'Kids'
+          item.category === 'Apparels' && item.collegeMerchandise && item.collegeMerchandise.trim() !== ''
         );
 
         if(showSearch && search){
@@ -59,6 +71,15 @@ const Collection = () => {
          if(subCategory.length>0){
           productsCopy=productsCopy.filter(item=>subCategory.includes(item.subCategory));
          }
+
+         if(selectedColors.length>0){
+          productsCopy=productsCopy.filter(item => {
+            if(!item.color) return false;
+            const productColor = item.color.toLowerCase();
+            return selectedColors.some(color => productColor.includes(color.toLowerCase()));
+          });
+         }
+
           setFilteredProducts(productsCopy);
          
 
@@ -96,7 +117,7 @@ const Collection = () => {
      useEffect(()=>{
 
       applyFilter();
-     },[category,subCategory,search,showSearch,products])
+     },[category,subCategory,search,showSearch,products,selectedColors])
     
 
      useEffect(()=>{
@@ -104,6 +125,23 @@ const Collection = () => {
       sortProduct();
 
      },[sortType])
+
+     useEffect(()=>{
+      // Extract unique colors from products
+      const colors = new Set();
+      products.forEach(product => {
+        if(product.color && product.color.trim() !== '' && 
+           product.category === 'Apparels' && 
+           product.collegeMerchandise && product.collegeMerchandise.trim() !== ''){
+          // Split colors by comma if multiple colors are present
+          const productColors = product.color.split(',').map(c => c.trim());
+          productColors.forEach(color => {
+            if(color) colors.add(color);
+          });
+        }
+      });
+      setAvailableColors(Array.from(colors).sort());
+     },[products])
 
   return (
     <div className='flex flex-col sm:flex-row gap-1 sm:gap-10 pt-10 border-t'>
@@ -121,15 +159,7 @@ const Collection = () => {
                  <div className='flex flex-col gap-2 text-sm font-light text-gray-700'>
                   <p className='flex gap-2'> 
 
-                   <input type="checkbox" className='w-3'  value={'Men'} onChange={toggleCategory} />Men
-                  </p>
-                  <p className='flex gap-2'> 
-
-                   <input type="checkbox" className='w-3'  value={'Women'} onChange={toggleCategory} />Women
-                  </p>
-                  <p className='flex gap-2'> 
-
-                   <input type="checkbox" className='w-3'  value={'Kids'} onChange={toggleCategory} />Kids
+                   <input type="checkbox" className='w-3'  value={'Apparels'} onChange={toggleCategory} />Apparels
                   </p>
                  </div>
 
@@ -141,17 +171,33 @@ const Collection = () => {
                  <div className='flex flex-col gap-2 text-sm font-light text-gray-700'>
                   <p className='flex gap-2'> 
 
-                   <input type="checkbox" className='w-3'  value={'Topwear'}  onChange={toggleSubCategory} /> Topwear
+                   <input type="checkbox" className='w-3'  value={'Men'}  onChange={toggleSubCategory} /> Men
                   </p>
                   <p className='flex gap-2'> 
 
-                   <input type="checkbox" className='w-3'  value={'Bottomwear'} onChange={toggleSubCategory} /> Bottomwear
+                   <input type="checkbox" className='w-3'  value={'Women'} onChange={toggleSubCategory} /> Women
                   </p>
                   <p className='flex gap-2'> 
 
-                   <input type="checkbox" className='w-3'  value={'Winterwear'} onChange={toggleSubCategory} /> Winterwear
+                   <input type="checkbox" className='w-3'  value={'Kids'} onChange={toggleSubCategory} /> Kids
                   </p>
                 
+                 </div>
+            </div>
+
+          {/* Color filter */}
+           <div className={`border border-gray-300 pl-5 py-3 my-5 ${ShowFileter ? '': 'hidden'} sm:block `}>
+                 <p className='mb-3 text-sm font-medium '>COLORS</p>
+                 <div className='flex flex-wrap gap-2 text-sm font-light text-gray-700'>
+                  {availableColors.map((color, index) => (
+                    <button 
+                      key={index}
+                      onClick={() => toggleColor(color)}
+                      className={`px-3 py-1 border rounded ${selectedColors.includes(color) ? 'bg-gray-800 text-white' : 'bg-white text-gray-700'}`}
+                    >
+                      {color}
+                    </button>
+                  ))}
                  </div>
             </div>
          </div>
@@ -182,7 +228,7 @@ const Collection = () => {
      <div className='grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 gap-y-6 '>
         {
            filteredProducts.map((item,index)=>(
-            <Productitem key={index} name={item.name} id={item._id} price={item.price} Mrpprice={item.Mrpprice} image={item.image}  />
+            <Productitem key={index} name={item.name} id={item._id} price={item.price} Mrpprice={item.Mrpprice} image={item.image} quantity={item.quantity} />
 
            ))
 

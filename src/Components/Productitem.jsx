@@ -2,17 +2,27 @@ import React, {  useContext } from 'react'
 import { ShopContext } from '../context/ShopContext';
 import { Link } from 'react-router-dom';
 
-const Productitem = ({id,image,name,price,Mrpprice}) => {
+const Productitem = ({id,image,name,price,Mrpprice,quantity}) => {
 
     const {currency}=useContext(ShopContext);
  
 
   return (
     <Link className='text-gray-700 cursor-pointer' to={`/product/${id}`}>
-      <div className='overflow-hidden'>
+      <div className='overflow-hidden relative'>
       
       <img className='hover:scale-110 transition ease-in-out' src={image[0]} alt="" />
 
+      {/* Sold Out Badge */}
+      {quantity === 0 ? (
+        <div className='absolute top-2 left-2 bg-red-600 text-white px-3 py-1 text-xs font-bold rounded'>
+          SOLD OUT
+        </div>
+      ) : quantity > 0 && quantity < 10 ? (
+        <div className='absolute top-2 left-2 bg-orange-500 text-white px-3 py-1 text-xs font-bold rounded animate-pulse'>
+          HURRY! LOW STOCK
+        </div>
+      ) : null}
 
       </div>
 

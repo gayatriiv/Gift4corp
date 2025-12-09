@@ -5,67 +5,87 @@ import Title from './Title'
 const ProductRating = () => {
   const [currentIndex, setCurrentIndex] = useState(0)
 
-  // Sample customer reviews data
+  // Customer reviews from Google Maps
   const reviews = [
     {
       id: 1,
-      name: "Rahul Sharma",
-      college: "IIT Delhi",
+      name: "Abhijeet",
+      college: "Local Guide · 733 reviews",
       rating: 5,
-      comment: "Amazing quality! The college merchandise is exactly what I was looking for. The fabric is premium and the print quality is outstanding.",
-      product: "College Hoodie",
-      image: "https://i.pravatar.cc/150?img=12",
-      date: "2 days ago"
+      comment: "Abhishek was excellent to work with for branded gifts. We were offered a wide choice of products across price points and very responsive throughout the process. Will definitely highly recommended for corporate gifting.",
+      product: "Branded Corporate Gifts",
+      image: "https://i.pravatar.cc/150?img=33",
+      date: "11 months ago"
     },
     {
       id: 2,
-      name: "Priya Patel",
-      college: "BITS Pilani",
+      name: "Ankita Maslekar",
+      college: "12 reviews · 2 photos",
       rating: 5,
-      comment: "Fast delivery and excellent customer service. The t-shirt fits perfectly and the design is really cool. Highly recommend!",
-      product: "College T-Shirt",
-      image: "https://i.pravatar.cc/150?img=45",
-      date: "1 week ago"
+      comment: "I've known Abhishek from Gifts4Corp for over 5 years now, and seeing his journey and hard work over the years makes me incredibly proud. Every interaction with him has been a testament to his professionalism, dedication, and genuine commitment to customer satisfaction.",
+      product: "Corporate Gifts",
+      image: "https://i.pravatar.cc/150?img=47",
+      date: "11 months ago"
     },
     {
       id: 3,
-      name: "Arjun Reddy",
-      college: "NIT Trichy",
-      rating: 4,
-      comment: "Good quality products at reasonable prices. The material is durable and comfortable. Will definitely order again!",
-      product: "College Cap",
-      image: "https://i.pravatar.cc/150?img=33",
-      date: "3 days ago"
+      name: "Deepa Kiran",
+      college: "Local Guide · 33 reviews",
+      rating: 5,
+      comment: "The store has many interesting products and I found the quality to be good each and every time. This time I placed order remotely for delivery in different cities. The service was absolutely prompt and smooth.",
+      product: "Multi-City Delivery",
+      image: "https://i.pravatar.cc/150?img=44",
+      date: "1 year ago"
     },
     {
       id: 4,
-      name: "Sneha Gupta",
-      college: "DU",
+      name: "Roopa Jain",
+      college: "6 reviews",
       rating: 5,
-      comment: "Love the variety of products available! Got matching merchandise for my entire group. Great experience shopping here.",
-      product: "College Mug Set",
-      image: "https://i.pravatar.cc/150?img=25",
-      date: "5 days ago"
+      comment: "Abhishek a gem person… you just name it he delivers exactly the way you want it. Wonderful experience… I had Personalised T-shirt's and trophies. The quality were Up to the mark.",
+      product: "Personalized T-Shirts & Trophies",
+      image: "https://i.pravatar.cc/150?img=38",
+      date: "11 months ago"
     },
     {
       id: 5,
-      name: "Vikram Singh",
-      college: "IIM Ahmedabad",
+      name: "Rajashree Behera",
+      college: "10 reviews · 5 photos",
       rating: 5,
-      comment: "Top-notch quality and the customization options are fantastic. The team was very helpful throughout the ordering process.",
-      product: "Custom Jacket",
-      image: "https://i.pravatar.cc/150?img=51",
-      date: "1 week ago"
+      comment: "It is a great experience with Gifts4Corporate. We have ordered customized tshirts for a group of people from different part of India. The quality is really good and experienced hassle free delivery.",
+      product: "Customized T-Shirts",
+      image: "https://i.pravatar.cc/150?img=49",
+      date: "1 year ago"
     },
     {
       id: 6,
-      name: "Ananya Iyer",
-      college: "VIT Vellore",
-      rating: 4,
-      comment: "Really impressed with the product range and quality. The college logo looks great on the merchandise. Shipping was quick too!",
-      product: "College Backpack",
-      image: "https://i.pravatar.cc/150?img=48",
-      date: "4 days ago"
+      name: "Jasmine Gujral",
+      college: "4 reviews",
+      rating: 5,
+      comment: "Abhishek has been super helpful and creative in helping me design tshirts for an event in the family. Last minute changes were also taken care of, and quality product delivered on time. Thank you to him and his team for making it possible.",
+      product: "Custom T-Shirts",
+      image: "https://i.pravatar.cc/150?img=43",
+      date: "2 years ago"
+    },
+    {
+      id: 7,
+      name: "Lokesh N",
+      college: "2 reviews",
+      rating: 5,
+      comment: "Store has lots of options to choose, Abhishek and his team provided smooth shipping experience, Highly recommended for branding and customisation.",
+      product: "Branding & Customisation",
+      image: "https://i.pravatar.cc/150?img=68",
+      date: "11 months ago"
+    },
+    {
+      id: 8,
+      name: "Vasudev Dubey",
+      college: "Local Guide · 20 reviews",
+      rating: 5,
+      comment: "Have ordered Sports Jersey, Jackets and Bags from here. The Quality has been excellent. They accept customized orders as well.",
+      product: "Sports Jersey, Jackets & Bags",
+      image: "https://i.pravatar.cc/150?img=52",
+      date: "1 year ago"
     }
   ]
 

@@ -23,7 +23,7 @@ const CategoryShowcase = () => {
       id: 3,
       title: "Lifestyle Picks",
       subtitle: "View More",
-      link: "/lifestyle",
+      link: "/",
       image: "https://images.unsplash.com/photo-1556740738-b6a63e27c4df?w=800&h=600&fit=crop",
       bgPosition: "center"
     }

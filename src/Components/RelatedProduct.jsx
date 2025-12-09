@@ -51,7 +51,7 @@ const RelatedProduct = ({category,subCategory}) => {
       {
         realted.map((item,index)=>(
 
-            <ProductItem key={index} id={item._id} name={item.name} price={item.price} Mrpprice={item.Mrpprice} image={item.image} />
+            <ProductItem key={index} id={item._id} name={item.name} price={item.price} Mrpprice={item.Mrpprice} image={item.image} quantity={item.quantity} />
         ))
       }
 
