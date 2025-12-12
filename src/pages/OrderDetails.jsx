@@ -75,6 +75,30 @@ const OrderDetails = () => {
     return order.items.reduce((sum, item) => sum + (item.price * item.quantity), 0);
   };
 
+  const calculateGST = () => {
+    let apparelAmount = 0;
+    let otherAmount = 0;
+
+    order.items.forEach(item => {
+      const itemTotal = item.price * item.quantity;
+      if (item.category === 'Apparels') {
+        apparelAmount += itemTotal;
+      } else {
+        otherAmount += itemTotal;
+      }
+    });
+
+    const apparelGST = apparelAmount * 0.05; // 5% for Apparels
+    const otherGST = otherAmount * 0.18; // 18% for Others
+    const totalGST = apparelGST + otherGST;
+
+    return {
+      apparelGST: Math.round(apparelGST * 100) / 100,
+      otherGST: Math.round(otherGST * 100) / 100,
+      totalGST: Math.round(totalGST * 100) / 100
+    };
+  };
+
   if (loading) {
     return (
       <div className='min-h-screen flex items-center justify-center'>
@@ -196,6 +220,27 @@ const OrderDetails = () => {
                 <span>Subtotal ({order.items.length} items)</span>
                 <span>{currency}{calculateSubtotal()}</span>
               </div>
+              
+              {/* GST Breakdown */}
+              {calculateGST().apparelGST > 0 && (
+                <div className='flex justify-between text-gray-600 text-sm'>
+                  <span className='pl-4'>GST on Apparels (5%)</span>
+                  <span>{currency}{calculateGST().apparelGST}</span>
+                </div>
+              )}
+              {calculateGST().otherGST > 0 && (
+                <div className='flex justify-between text-gray-600 text-sm'>
+                  <span className='pl-4'>GST on Other Items (18%)</span>
+                  <span>{currency}{calculateGST().otherGST}</span>
+                </div>
+              )}
+              {calculateGST().totalGST > 0 && (
+                <div className='flex justify-between text-gray-700 font-medium'>
+                  <span>Total GST</span>
+                  <span>{currency}{calculateGST().totalGST}</span>
+                </div>
+              )}
+              
               <div className='flex justify-between text-gray-600'>
                 <span>Shipping Fee</span>
                 <span>{currency}{order.shippingFee || 0}</span>
