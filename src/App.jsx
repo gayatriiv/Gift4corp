@@ -30,6 +30,7 @@ const ThankYou = lazy(() => import('./pages/ThankYou'))
 const PrivacyPolicy = lazy(() => import('./pages/PrivacyPolicy'))
 const TermsConditions = lazy(() => import('./pages/TermsConditions'))
 const ReturnsRefunds = lazy(() => import('./pages/ReturnsRefunds'))
+const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
 
 // Loading component
 const LoadingFallback = () => (
@@ -87,6 +88,7 @@ const App = () => {
                    <Route path='/privacy-policy' element={<PrivacyPolicy/>} />
                    <Route path='/terms-and-conditions' element={<TermsConditions/>} />
                    <Route path='/returns-refunds' element={<ReturnsRefunds/>} />
+                   <Route path='/forgot-password' element={<ForgotPassword/>} />
           </Routes>
         </Suspense>
       </div>
