@@ -23,7 +23,12 @@ const Product = () => {
    const [currentStock, setCurrentStock] = useState(0);
    
    // Check if product has size variants
-   const hasSizeVariants = productData && productData.sizeVariants && productData.sizeVariants.length > 0;
+  const hasSizeVariants = productData && productData.sizeVariants && productData.sizeVariants.length > 0;
+
+  // Calculate available stock: sum of all size variant stocks if present, else overall quantity
+  const availableStock = hasSizeVariants
+    ? productData.sizeVariants.reduce((sum, v) => sum + (Number(v.quantity) || 0), 0)
+    : (productData && typeof productData.quantity === 'number' ? productData.quantity : 0);
 
 const fetchProductData = async() => {
    
@@ -58,6 +63,24 @@ useEffect(() => {
 
   return productData ? (
     <div className='border-t-2 pt-10 pb-16 transition-opacity ease-in duration-500 opacity-100'>
+      {/* Available Stock Display */}
+      <div className="mb-2">
+        <span className="font-semibold text-gray-700">Available Stock: </span>
+        <span className={
+          availableStock === 0
+            ? 'text-red-600 font-bold'
+            : availableStock < 10
+              ? 'text-orange-600 font-bold'
+              : 'text-green-700 font-bold'
+        }>
+          {availableStock}
+        </span>
+        {hasSizeVariants && (
+          <span className="text-xs text-gray-500 ml-2">(
+            {productData.sizeVariants.map(v => `${v.size}: ${v.quantity}`).join(', ')}
+          )</span>
+        )}
+      </div>
   {/* Product   data */}
   <div className='flex gap-12 sm:gap-12 flex-col sm:flex-row'>
  {/* Product images */}
