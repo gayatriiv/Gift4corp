@@ -1,8 +1,10 @@
 import React, { Suspense, lazy } from 'react'
-import { Routes, Route } from 'react-router-dom'
+import { Routes, Route, useLocation } from 'react-router-dom'
+import AnnouncementBar from './Components/AnnouncementBar'
 import Navbar from './Components/Navbar'
 import Footer from './Components/Footer'
-import Searchbar from './Components/Searchbar'
+import SearchOverlay from './Components/SearchOverlay'
+import LoadingSpinner from './Components/LoadingSpinner'
 import { ToastContainer } from 'react-toastify'
 
 // Lazy load page components for code splitting
@@ -34,17 +36,12 @@ const ReturnsRefunds = lazy(() => import('./pages/ReturnsRefunds'))
 const ShippingPolicy = lazy(() => import('./pages/ShippingPolicy'))
 const ForgotPassword = lazy(() => import('./pages/ForgotPassword'))
 
-// Loading component
-const LoadingFallback = () => (
-  <div className="flex items-center justify-center min-h-screen">
-    <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-gray-900"></div>
-  </div>
-)
-
 const App = () => {
+  const location = useLocation()
+
   return (
-    <div className='flex flex-col min-h-screen'>
-      <ToastContainer 
+    <div className='flex flex-col min-h-screen bg-brand-off-white text-text-primary'>
+      <ToastContainer
         position="top-right"
         autoClose={2000}
         hideProgressBar={false}
@@ -56,13 +53,13 @@ const App = () => {
         pauseOnHover={false}
         limit={1}
       />
-      <div className='px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'>
-        <Navbar />
-        <Searchbar/>
-      </div>
-      <div className='flex-grow px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'>
-        <Suspense fallback={<LoadingFallback />}>
-          <Routes>
+      <AnnouncementBar />
+      <Navbar />
+      <SearchOverlay />
+      <main className='flex-grow'>
+        <Suspense fallback={<LoadingSpinner />}>
+          <div key={location.pathname} className="animate-fade-in-up">
+            <Routes location={location}>
                    <Route path='/' element={<Home />} />
                    <Route path='/collection'  element={<Collection/>} />
                    <Route path='/about' element={<About />} />
@@ -92,12 +89,11 @@ const App = () => {
                    <Route path='/returns-refunds' element={<ReturnsRefunds/>} />
                    <Route path='/forgot-password' element={<ForgotPassword/>} />
                    <Route path='/shipping-policy' element={<ShippingPolicy/>} />
-          </Routes>
+            </Routes>
+          </div>
         </Suspense>
-      </div>
-      <div className='px-4 sm:px-[5vw] md:px-[7vw] lg:px-[9vw]'>
-        <Footer />
-      </div>
+      </main>
+      <Footer />
     </div>
   )
 }

@@ -1,179 +1,269 @@
-import React, { useContext, useState, useEffect } from 'react'
-import { assets } from '../assets/assets.js'
+import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { Link, NavLink } from 'react-router-dom'
-import { ShopContext } from '../context/ShopContext.jsx';
-import axios from 'axios';
+import axios from 'axios'
+import { Menu, Search, ShoppingBag, User, X, ChevronDown } from 'lucide-react'
+import { assets } from '../assets/assets'
+import { ShopContext } from '../context/ShopContext.jsx'
 
 const Navbar = () => {
+  const [visible, setVisible] = useState(false)
+  const [isScrolled, setIsScrolled] = useState(false)
+  const [merchandiseList, setMerchandiseList] = useState([])
+  const [showMerchandiseDropdown, setShowMerchandiseDropdown] = useState(false)
+  const { setShowSearch, getCartCount, navigate, token, setToken, setCartItems } =
+    useContext(ShopContext)
+  const backendURL = import.meta.env.VITE_BACKEND_URL
 
-  const [visible, setVisible] = useState(false);
-  const [merchandiseList, setMerchandiseList] = useState([]);
-  const [showMerchandiseDropdown, setShowMerchandiseDropdown] = useState(false);
+  const navItems = useMemo(
+    () => [
+      { label: 'Home', path: '/' },
+      { label: 'Collection', path: '/collection' },
+      { label: 'College Merchandise', path: '/CollegeMerchandise', hasDropdown: true },
+      { label: 'About', path: '/about' },
+      { label: 'Contact', path: '/contact' },
+    ],
+    []
+  )
 
-  const { setShowSearch, getCartCount, navigate, token, setToken, setCartItems } = useContext(ShopContext);
-  const backendURL = import.meta.env.VITE_BACKEND_URL;
-
-  // Fetch college merchandise list
   const fetchMerchandiseList = async () => {
     try {
-      const response = await axios.get(backendURL + '/api/college-merchandise/list');
+      const response = await axios.get(`${backendURL}/api/college-merchandise/list`)
       if (response.data.success) {
-        // Filter out inactive items and those with empty/None names
-        const filteredList = response.data.merchandises.filter(item => 
-          item.isActive && 
-          item.name && 
-          item.name.trim() !== '' && 
-          item.name.toLowerCase() !== 'none'
-        );
-        setMerchandiseList(filteredList);
+        const filteredList = response.data.merchandises.filter(
+          (item) =>
+            item.isActive &&
+            item.name &&
+            item.name.trim() !== '' &&
+            item.name.toLowerCase() !== 'none'
+        )
+        setMerchandiseList(filteredList)
       }
     } catch (error) {
-      console.log(error);
+      console.log(error)
     }
-  };
-
-  useEffect(() => {
-    fetchMerchandiseList();
-  }, []);
-
-
-  const logout = () => {
-    navigate('/login');
-    localStorage.removeItem('token');
-    setToken('');
-    setCartItems({});
-
-
   }
 
+  useEffect(() => {
+    fetchMerchandiseList()
+  }, [])
 
+  useEffect(() => {
+    const onScroll = () => {
+      setIsScrolled(window.scrollY > 8)
+    }
+
+    window.addEventListener('scroll', onScroll)
+    return () => window.removeEventListener('scroll', onScroll)
+  }, [])
+
+  const logout = () => {
+    navigate('/login')
+    localStorage.removeItem('token')
+    setToken('')
+    setCartItems({})
+  }
 
   return (
-    <div className='flex items-center justify-between py-5 font-medium'>
-      <Link to='/'><img src={assets.logo} className="w-48" alt="YourCampusMerch" /></Link>
+    <header className="sticky top-0 z-[50] bg-brand-off-white">
+      <div
+        className={`transition-all duration-300 ${
+          isScrolled ? 'border-b border-border-light shadow-sm' : 'border-b border-transparent'
+        }`}
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-12 h-16 md:h-[72px] flex items-center justify-between">
+          <Link to="/" className="flex items-center gap-2">
+            <img src={assets.logo} className="h-8 md:h-10 w-auto" alt="Gift4corp" />
+          </Link>
 
-      <ul className='hidden sm:flex gap-5 text-sm text-gray-700'>
-        <NavLink to='/' className='flex flex-col items-center gap-1'>
-          <p>
-            Home
-          </p>
-          <hr className='w-2/4 border-none h-[1.5px] bg-gray-700 hidden' />
-
-
-        </NavLink>
-        <NavLink to='/Collection' className='flex flex-col items-center gap-1'>
-          <p>
-            Collection
-          </p>
-          <hr className='w-2/4 border-none h-[1.5px] bg-gray-700 hidden' />
-
-
-        </NavLink>
-         <div 
-          className='relative group'
-          onMouseEnter={() => setShowMerchandiseDropdown(true)}
-          onMouseLeave={() => setShowMerchandiseDropdown(false)}
-        >
-          <NavLink to='/CollegeMerchandise' className='flex flex-col items-center gap-1'>
-            <p className='flex items-center gap-1'>
-              College Merchandise
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-              </svg>
-            </p>
-            <hr className='w-2/4 border-none h-[1.5px] bg-gray-700 hidden' />
-          </NavLink>
-          
-          {/* Dropdown Menu */}
-          {showMerchandiseDropdown && merchandiseList.length > 0 && (
-            <div className='absolute left-0 top-full pt-4 z-50'>
-              <div className='bg-white shadow-lg rounded-lg py-3 px-2 min-w-[200px] max-h-[400px] overflow-y-auto'>
-                <Link 
-                  to='/CollegeMerchandise'
-                  className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors'
-                  onClick={() => setShowMerchandiseDropdown(false)}
+          <nav className="hidden lg:flex items-center gap-8">
+            {navItems.map((item) =>
+              item.hasDropdown ? (
+                <div
+                  key={item.label}
+                  className="relative"
+                  onMouseEnter={() => setShowMerchandiseDropdown(true)}
+                  onMouseLeave={() => setShowMerchandiseDropdown(false)}
                 >
-                  <span className='font-semibold'>All Merchandise</span>
-                </Link>
-                <hr className='my-2' />
-                {merchandiseList.map((merchandise) => (
-                  <Link
-                    key={merchandise._id}
-                    to={`/CollegeMerchandise?merchandise=${encodeURIComponent(merchandise.name)}`}
-                    className='block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 rounded transition-colors'
-                    onClick={() => setShowMerchandiseDropdown(false)}
+                  <NavLink
+                    to={item.path}
+                    className={({ isActive }) =>
+                      `text-nav text-text-secondary uppercase tracking-[0.2em] transition ${
+                        isActive ? 'text-text-primary' : 'hover:text-text-primary'
+                      }`
+                    }
                   >
-                    {merchandise.name}
-                  </Link>
-                ))}
-              </div>
+                    <span className="inline-flex items-center gap-2">
+                      {item.label}
+                      <ChevronDown className="h-4 w-4" />
+                    </span>
+                  </NavLink>
+                  {showMerchandiseDropdown && merchandiseList.length > 0 && (
+                    <div className="absolute left-0 top-full pt-4 z-[60]">
+                      <div className="bg-white border border-border-light shadow-lg min-w-[240px]">
+                        <Link
+                          to="/CollegeMerchandise"
+                          className="block px-4 py-3 text-xs uppercase tracking-[0.2em] text-text-secondary hover:text-text-primary"
+                          onClick={() => setShowMerchandiseDropdown(false)}
+                        >
+                          All Merchandise
+                        </Link>
+                        <div className="h-px bg-border-light" />
+                        {merchandiseList.map((merchandise) => (
+                          <Link
+                            key={merchandise._id}
+                            to={`/CollegeMerchandise?merchandise=${encodeURIComponent(
+                              merchandise.name
+                            )}`}
+                            className="block px-4 py-3 text-sm text-text-secondary hover:text-text-primary hover:bg-brand-cream/60"
+                            onClick={() => setShowMerchandiseDropdown(false)}
+                          >
+                            {merchandise.name}
+                          </Link>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <NavLink
+                  key={item.label}
+                  to={item.path}
+                  className={({ isActive }) =>
+                    `text-nav text-text-secondary uppercase tracking-[0.2em] transition ${
+                      isActive ? 'text-text-primary' : 'hover:text-text-primary'
+                    }`
+                  }
+                >
+                  {item.label}
+                </NavLink>
+              )
+            )}
+          </nav>
+
+          <div className="flex items-center gap-4">
+            <button
+              type="button"
+              onClick={() => setShowSearch(true)}
+              className="h-10 w-10 flex items-center justify-center border border-border-light hover:border-border-dark transition"
+              aria-label="Open search"
+            >
+              <Search className="h-4 w-4" />
+            </button>
+
+            <div className="relative group hidden sm:block">
+              <button
+                type="button"
+                onClick={() => (token ? null : navigate('/login'))}
+                className="h-10 w-10 flex items-center justify-center border border-border-light hover:border-border-dark transition"
+                aria-label="Account"
+              >
+                <User className="h-4 w-4" />
+              </button>
+              {token && (
+                <div className="absolute right-0 pt-4 hidden group-hover:block">
+                  <div className="bg-white border border-border-light shadow-lg min-w-[180px]">
+                    <button
+                      type="button"
+                      className="w-full text-left px-4 py-3 text-xs uppercase tracking-[0.2em] text-text-secondary hover:text-text-primary"
+                    >
+                      My Profile
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => navigate('/orders')}
+                      className="w-full text-left px-4 py-3 text-xs uppercase tracking-[0.2em] text-text-secondary hover:text-text-primary"
+                    >
+                      Orders
+                    </button>
+                    <button
+                      type="button"
+                      onClick={logout}
+                      className="w-full text-left px-4 py-3 text-xs uppercase tracking-[0.2em] text-text-secondary hover:text-text-primary"
+                    >
+                      Logout
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
-          )}
-        </div>
-        <NavLink to='/About' className='flex flex-col items-center gap-1'>
-          <p>
-            About Us
-          </p>
-          <hr className='w-2/4 border-none h-[1.5px] bg-gray-700 hidden' />
 
+            <Link
+              to="/cart"
+              className="relative h-10 w-10 flex items-center justify-center border border-border-light hover:border-border-dark transition"
+              aria-label="Cart"
+            >
+              <ShoppingBag className="h-4 w-4" />
+              <span className="absolute -bottom-2 -right-2 h-5 w-5 rounded-full bg-brand-black text-brand-white text-[10px] flex items-center justify-center">
+                {getCartCount()}
+              </span>
+            </Link>
 
-        </NavLink>
-       
-        <NavLink to='/Contact' className='flex flex-col items-center gap-1'>
-          <p>
-            Contact
-          </p>
-          <hr className='w-2/4 border-none h-[1.5px] bg-gray-700 hidden ' />
-
-
-        </NavLink>
-      </ul>
-
-      <div className='flex items-center gap-6'>
-        <img onClick={() => setShowSearch(true)} src={assets.search_icon} className='w-5 cursor-pointer ' alt="" />
-
-
-        <div className='group relative'>
-          <img onClick={() => token ? null : navigate('/login')} className="w-5 cursor-pointer" src={assets.profile_icon} alt="" />
-          {/* Dropdown menu */}
-          {token && <div className='group-hover:block hidden absolute dropdown-menu right-0 pt-4 '>
-            <div className='flex flex-col gap-2 w-36 py-3 px-5 bg-slate-100 text-gray-500 rounded '>
-              <p className='cursor-pointer hover:text-black '>My Profile</p>
-              <p onClick={()=>navigate("/orders")} className='cursor-pointer hover:text-black '>Orders</p>
-              <p onClick={logout} className='cursor-pointer hover:text-black '>Logout</p>
-            </div>
-          </div>}
-        </div>
-
-        <Link to='/cart' className='relative'>
-
-          <img src={assets.cart_icon} className='w-5 min-w-5 ' alt="" />
-          <p className='absolute right-[-5px] bottom-[-5px] w-4 text-center leading-4 bg-black text-white aspect-square rounded-full text-[8px] '>{getCartCount()}</p>
-
-        </Link>
-
-        <img onClick={() => setVisible(true)} src={assets.menu_icon} className='w-5 cursor-pointer sm:hidden ' alt="" />
-
-
-
-      </div>
-
-      {/* sidebar menu for small screen */}
-      <div className={`absolute top-0 right-0 bottom-0 overflow-hidden bg-white transition-all ${visible ? 'w-full' : 'w-0'} `}>
-        <div className='flex flex-col text-gray-600  '>
-          <div onClick={() => setVisible(false)} className='flex items-center gap-4 p-3 cursor-pointer'>
-            <img className='h-4 rotate-180' src={assets.dropdown_icon} alt="" />
-            <p>Back</p>
+            <button
+              type="button"
+              onClick={() => setVisible(true)}
+              className="h-10 w-10 flex items-center justify-center border border-border-light hover:border-border-dark transition lg:hidden"
+              aria-label="Open menu"
+            >
+              <Menu className="h-4 w-4" />
+            </button>
           </div>
-
-          <NavLink onClick={() => setVisible(false)} className='py-2 pl-6 border ' to='/'>HOME</NavLink>
-          <NavLink onClick={() => setVisible(false)} className='py-2 pl-6 border ' to='/Collection'>COLLECTION</NavLink>
-          <NavLink onClick={() => setVisible(false)} className='py-2 pl-6 border ' to='/CollegeMerchandise'>COLLEGE MERCHANDISE</NavLink>
-          <NavLink onClick={() => setVisible(false)} className='py-2 pl-6 border ' to='/About'>ABOUT</NavLink>
-          <NavLink onClick={() => setVisible(false)} className='py-2 pl-6 border ' to='/Contact'>CONTACT</NavLink>
         </div>
       </div>
-    </div>
+
+      {visible && (
+        <div className="fixed inset-0 z-[70] bg-black/40">
+          <div className="absolute top-0 right-0 h-full w-full sm:w-[420px] bg-white animate-slide-in-right">
+            <div className="flex items-center justify-between px-6 py-4 border-b border-border-light">
+              <p className="text-caption text-text-secondary">Menu</p>
+              <button
+                type="button"
+                onClick={() => setVisible(false)}
+                className="h-10 w-10 flex items-center justify-center border border-border-light hover:border-border-dark transition"
+                aria-label="Close menu"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <div className="flex flex-col px-6 py-4 gap-4">
+              {navItems.map((item) => (
+                <NavLink
+                  key={item.label}
+                  onClick={() => setVisible(false)}
+                  className={({ isActive }) =>
+                    `text-sm uppercase tracking-[0.2em] pb-3 border-b border-border-light ${
+                      isActive ? 'text-text-primary' : 'text-text-secondary'
+                    }`
+                  }
+                  to={item.path}
+                >
+                  {item.label}
+                </NavLink>
+              ))}
+
+              {merchandiseList.length > 0 && (
+                <div className="pt-4">
+                  <p className="text-caption text-text-tertiary mb-3">Merchandise</p>
+                  <div className="grid gap-2">
+                    {merchandiseList.map((item) => (
+                      <Link
+                        key={item._id}
+                        to={`/CollegeMerchandise?merchandise=${encodeURIComponent(
+                          item.name
+                        )}`}
+                        className="text-sm text-text-secondary"
+                        onClick={() => setVisible(false)}
+                      >
+                        {item.name}
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
+      )}
+    </header>
   )
 }
 
