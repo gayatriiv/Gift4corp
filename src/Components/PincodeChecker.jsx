@@ -1,125 +1,125 @@
-import React, { useState, useContext } from 'react';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { ShopContext } from '../context/ShopContext';
+import React, { useContext, useState } from 'react'
+import axios from 'axios'
+import { toast } from 'react-toastify'
+import { ShopContext } from '../context/ShopContext'
 
 const PincodeChecker = ({ productWeight = 0.5, onServiceabilityCheck = null }) => {
-  const { backendURL } = useContext(ShopContext);
-  const [pincode, setPincode] = useState('');
-  const [checking, setChecking] = useState(false);
-  const [result, setResult] = useState(null);
+  const { backendURL, currency } = useContext(ShopContext)
+  const [pincode, setPincode] = useState('')
+  const [checking, setChecking] = useState(false)
+  const [result, setResult] = useState(null)
 
   const checkPincode = async () => {
     if (!pincode || pincode.length !== 6) {
-      toast.error('Please enter a valid 6-digit pincode');
-      return;
+      toast.error('Please enter a valid 6-digit pincode')
+      return
     }
 
-    setChecking(true);
+    setChecking(true)
     try {
-      const response = await axios.post(backendURL + '/api/shipping/check-serviceability', {
-        pickup_postcode: '560070', // Bangalore warehouse pincode
+      const response = await axios.post(`${backendURL}/api/shipping/check-serviceability`, {
+        pickup_postcode: '560070',
         delivery_postcode: pincode,
         weight: productWeight,
-        cod: 1
-      });
+        cod: 1,
+      })
 
       if (response.data.success && response.data.data.data.available_courier_companies) {
-        const couriers = response.data.data.data.available_courier_companies;
+        const couriers = response.data.data.data.available_courier_companies
         if (couriers.length > 0) {
-          // Find the lowest price courier (for shipping fee)
           const lowestPriceCourier = couriers.reduce((min, courier) =>
             courier.rate < min.rate ? courier : min
-          );
+          )
           const fastest = couriers.reduce((min, courier) =>
             courier.estimated_delivery_days < min.estimated_delivery_days ? courier : min
-          );
-          const shippingFee = lowestPriceCourier.rate > 100 ? lowestPriceCourier.rate : 100;
+          )
+          const shippingFee = lowestPriceCourier.rate > 100 ? lowestPriceCourier.rate : 100
           setResult({
             available: true,
             days: fastest.estimated_delivery_days,
-            shipping_fee: shippingFee
-          });
-          toast.success(`Delivery available in ${fastest.estimated_delivery_days} days`);
+            shipping_fee: shippingFee,
+          })
+          toast.success(`Delivery available in ${fastest.estimated_delivery_days} days`)
           if (onServiceabilityCheck) {
-            onServiceabilityCheck({ available: true, shipping_fee: shippingFee });
+            onServiceabilityCheck({ available: true, shipping_fee: shippingFee })
           }
         } else {
-          setResult({ available: false });
-          toast.error('Delivery not available to this pincode');
+          setResult({ available: false })
+          toast.error('Delivery not available to this pincode')
           if (onServiceabilityCheck) {
-            onServiceabilityCheck({ available: false });
+            onServiceabilityCheck({ available: false })
           }
         }
       } else {
-        setResult({ available: false });
-        toast.error('Unable to check serviceability');
+        setResult({ available: false })
+        toast.error('Unable to check serviceability')
       }
     } catch (err) {
-      console.log(err);
-      toast.error('Error checking pincode');
-      setResult({ available: false });
+      console.log(err)
+      toast.error('Error checking pincode')
+      setResult({ available: false })
     } finally {
-      setChecking(false);
+      setChecking(false)
     }
-  };
-
-  const handleKeyPress = (e) => {
-    if (e.key === 'Enter') {
-      checkPincode();
-    }
-  };
+  }
 
   return (
-    <div className='mt-4 p-4 bg-gray-50 rounded-lg border border-gray-200'>
-      <p className='font-medium text-sm mb-3'>Check Delivery Availability</p>
-      <div className='flex gap-2'>
+    <div className="border border-border-light bg-white p-4">
+      <p className="text-xs uppercase tracking-[0.2em] text-text-tertiary">
+        Delivery Availability
+      </p>
+      <div className="mt-3 flex flex-col sm:flex-row gap-3">
         <input
-          type='number'
+          type="number"
           value={pincode}
           onChange={(e) => {
-            setPincode(e.target.value);
-            setResult(null);
+            setPincode(e.target.value)
+            setResult(null)
           }}
-          onKeyPress={handleKeyPress}
-          placeholder='Enter Pincode'
-          className='border border-gray-300 rounded px-3 py-2 text-sm flex-1'
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              checkPincode()
+            }
+          }}
+          placeholder="Enter pincode"
+          className="border border-border-light px-3 py-2 text-sm flex-1 bg-white"
           maxLength={6}
         />
         <button
+          type="button"
           onClick={checkPincode}
           disabled={checking || !pincode}
-          className='bg-black text-white px-6 py-2 text-sm rounded hover:bg-gray-800 disabled:bg-gray-300 disabled:cursor-not-allowed transition-all'
+          className="bg-brand-black text-brand-white px-6 py-2 text-button disabled:bg-border-medium"
         >
           {checking ? 'Checking...' : 'Check'}
         </button>
       </div>
 
       {result && (
-        <div className={`mt-3 p-3 rounded ${result.available ? 'bg-green-50 border border-green-200' : 'bg-red-50 border border-red-200'}`}>
+        <div
+          className={`mt-3 p-3 text-sm ${
+            result.available ? 'border border-border-light bg-brand-cream' : 'border border-border-light bg-white'
+          }`}
+        >
           {result.available ? (
-            <div className='flex items-start gap-2'>
-              <span className='text-green-600 text-lg'>✓</span>
-              <div className='text-sm'>
-                <p className='font-semibold text-green-700'>Delivery Available</p>
-                <p className='text-green-600 mt-1'>
-                  Expected delivery in <strong>{result.days} days</strong>
-                </p>
-                <p className='text-gray-600 text-xs mt-1'>Shipping Fee: ₹{result.shipping_fee || 100}</p>
-              </div>
-            </div>
-          ) : (
-            <div className='flex items-center gap-2'>
-              <span className='text-red-600 text-lg'>✗</span>
-              <p className='text-sm font-semibold text-red-700'>
-                Delivery not available to this pincode
+            <div>
+              <p className="text-text-primary font-semibold">Delivery Available</p>
+              <p className="text-text-secondary mt-1">
+                Expected delivery in {result.days} days.
+              </p>
+              <p className="text-text-secondary text-xs mt-1">
+                Shipping Fee: {currency}
+                {result.shipping_fee || 100}
               </p>
             </div>
+          ) : (
+            <p className="text-text-secondary">Delivery not available to this pincode.</p>
           )}
         </div>
       )}
     </div>
-  );
-};
+  )
+}
 
-export default PincodeChecker;
+export default PincodeChecker

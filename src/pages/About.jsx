@@ -1,65 +1,61 @@
 import React from 'react'
-import Title from '../Components/Title';
-import { assets } from '../assets/assets';
-import NewsletteBox from '../Components/NewsletteBox';
+import { assets } from '../assets/assets'
+
 const About = () => {
   return (
-    <div className='pb-16'>
-       <div className='text-2xl text-center pt-8 border-t '>
-              <Title text1={'ABOUT'} text2={'US'} />
-       </div>
-
-        <div className='my-10  flex flex-col md:flex-row gap-16'>
-              <img
-               className='w-full md:max-w-[450px] '
-              src={assets.about_img} alt="" />
-              <div className='flex flex-col justify-center gap-6 md:w-2/4 text-gray-600'>
-                    <p>Gifts4Corporate is a leading provider of branded merchandise, custom uniform solutions, corporate gifts, hampers, and merchandising services. Partnering with businesses across India, we specialize in delivering unique, practical, and impact-driven products that enhance ROI on marketing campaigns, employee engagement programs, and brand-building initiatives.</p>
-                    <p>What sets us apart is our relentless pursuit of innovation and our commitment to meaningful storytelling. This philosophy is beautifully reflected in our signature gift hampers—each thoughtfully curated box includes captivating stories showcasing India’s folk art traditions and the craftsmanship of artisans from diverse regions. By supporting these artisans, we contribute to preserving India’s rich cultural heritage for future generations.</p>
-<b className='text-gray-800'>Our mission</b>
-<p>
-  With meticulous attention to detail and rigorous quality checks, Gifts4Corporate has earned the trust of leading organizations for decades. Whether it’s elevating your brand presence or creating memorable experiences for your stakeholders, we are your reliable partner for all corporate gifting and merchandising needs.
-
-</p>
-              </div>
+    <section className="border-t border-border-light">
+      <div className="full-bleed relative h-[50vh] min-h-[320px]">
+        <img src={assets.about_img} alt="About Gift4corp" className="h-full w-full object-cover" />
+        <div className="absolute inset-0 bg-black/40" />
+        <div className="absolute inset-0 flex items-center justify-center">
+          <h1 className="text-4xl sm:text-5xl font-semibold text-white">About Gift4corp</h1>
         </div>
-
-        <div className='text-xl py-4 '>
-          <Title text1={'WHY'} text2={'CHOOSE US'}/>
-        </div>
-
-
-      <div className='flex flex-col md:flex-row text-sm mb-20 '>
-              <div className='border px-10 md:px-16 py-8 sm:py-20 flex flex-col gap-5 '>
-                <b>Quality Assurance</b>
-                <p className='text-gray-600 '>We meticulously select and vet each product to ensure it meets our stringent quality standards.
-
-</p>
-
-              </div>
-              <div className='border px-10 md:px-16 py-8 sm:py-20 flex flex-col gap-5 '>
-                <b>Convenience:
-</b>
-                <p className='text-gray-600 '>With our user-friendly interface and hassle-free ordering process, shopping has never been easier.
-
-
-
-</p>
-
-              </div>
-              <div className='border px-10 md:px-16 py-8 sm:py-20 flex flex-col gap-5 '>
-                <b>Exceptional Customer Service:
-</b>
-                <p className='text-gray-600 '>Our team of dedicated professionals is here to assist you the way, ensuring your satisfaction is our top priority
-
-</p>
-
-              </div>
       </div>
 
-      <NewsletteBox/>
+      <div className="max-w-4xl mx-auto px-6 sm:px-10 lg:px-16 py-16 space-y-6 text-text-secondary text-sm leading-7">
+        <p>
+          Gift4corp is a leading provider of branded merchandise, custom uniform solutions,
+          corporate gifts, and premium hampers. We partner with businesses across India to
+          deliver thoughtful products that strengthen brand presence and employee engagement.
+        </p>
+        <p>
+          Our approach blends refined curation with reliable execution. Each gifting program
+          is tailored to the occasion, aligned with your brand, and delivered with attention
+          to detail.
+        </p>
+        <div>
+          <p className="text-xs uppercase tracking-[0.2em] text-text-tertiary">Our Mission</p>
+          <p className="mt-3">
+            To create memorable gifting experiences that elevate relationships, reinforce
+            brand identity, and deliver measurable impact for our clients.
+          </p>
+        </div>
+      </div>
 
-    </div>
+      <div className="max-w-6xl mx-auto px-6 sm:px-10 lg:px-16 pb-16">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          {[
+            {
+              title: 'Quality Assurance',
+              description: 'Every product is vetted to meet premium quality standards.',
+            },
+            {
+              title: 'Effortless Execution',
+              description: 'Streamlined ordering and responsive support for every program.',
+            },
+            {
+              title: 'Client Partnership',
+              description: 'We collaborate closely to deliver meaningful gifting outcomes.',
+            },
+          ].map((item) => (
+            <div key={item.title} className="border border-border-light bg-white p-6">
+              <p className="text-sm font-semibold text-text-primary">{item.title}</p>
+              <p className="text-sm text-text-secondary mt-3">{item.description}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
   )
 }
 

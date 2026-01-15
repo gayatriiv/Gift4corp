@@ -1,52 +1,54 @@
-import React, {  useContext } from 'react'
-import { ShopContext } from '../context/ShopContext';
-import { Link } from 'react-router-dom';
+import React, { useContext } from 'react'
+import { Link } from 'react-router-dom'
+import { ShopContext } from '../context/ShopContext'
 
-const Productitem = ({id,image,name,price,Mrpprice,quantity}) => {
-
-    const {currency}=useContext(ShopContext);
- 
+const Productitem = ({ id, image, name, price, Mrpprice, quantity }) => {
+  const { currency } = useContext(ShopContext)
+  const isSoldOut = quantity === 0
+  const isLowStock = quantity > 0 && quantity < 10
 
   return (
-    <Link className='text-gray-700 cursor-pointer flex flex-col h-full' to={`/product/${id}`}>
-      <div className='overflow-hidden relative aspect-square bg-gray-100'>
-      
-      <img className='hover:scale-110 transition ease-in-out w-full h-full object-cover' src={image[0]} alt="" />
+    <Link
+      className="group flex flex-col h-full border border-border-light bg-white"
+      to={`/product/${id}`}
+    >
+      <div className="relative aspect-[4/5] bg-brand-cream image-zoom">
+        <img className="h-full w-full object-cover" src={image[0]} alt={name} />
 
-      {/* Sold Out Badge */}
-      {quantity === 0 ? (
-        <div className='absolute top-2 left-2 bg-red-600 text-white px-3 py-1 text-xs font-bold rounded'>
-          SOLD OUT
-        </div>
-      ) : quantity > 0 && quantity < 10 ? (
-        <div className='absolute top-2 left-2 bg-orange-500 text-white px-3 py-1 text-xs font-bold rounded animate-pulse'>
-          HURRY! LOW STOCK
-        </div>
-      ) : null}
-
+        {isSoldOut && (
+          <span className="absolute top-3 left-3 bg-brand-black text-brand-white text-[11px] uppercase tracking-[0.2em] px-3 py-1">
+            Sold Out
+          </span>
+        )}
+        {isLowStock && !isSoldOut && (
+          <span className="absolute top-3 left-3 bg-accent text-brand-black text-[11px] uppercase tracking-[0.2em] px-3 py-1">
+            Low Stock
+          </span>
+        )}
       </div>
 
- <p className='pt-3 pb-1 text-sm line-clamp-2 flex-grow'>{name}</p>
-
-{/* <p className='text-sm font-medium '>{currency}{price}</p>
-<p className='text-sm font-medium line-through text-gray-500'>{currency}{Mrpprice}</p> */}
-<div className="flex items-center gap-3">
-  {/* Sale Price */}
-  <p className="text-base font-semibold text-red-600">
-    {currency}{price}
-  </p>
-
-  {/* MRP */}
-  <p className="text-sm line-through text-gray-500">
-    {currency}{Mrpprice}
-  </p>
-
-  {/* Discount Badge */}
-  <span className="text-xs bg-green-100 text-green-700 px-2 py-[2px] rounded-lg font-medium">
-    Sale
-  </span>
-</div>
-
+      <div className="flex flex-col gap-2 p-4">
+        <p className="text-sm font-semibold uppercase tracking-wide text-text-primary line-clamp-2">
+          {name}
+        </p>
+        <div className="flex items-center gap-3">
+          <p className="text-sm font-semibold">
+            {currency}
+            {price}
+          </p>
+          {Mrpprice && (
+            <p className="text-xs text-text-tertiary line-through">
+              {currency}
+              {Mrpprice}
+            </p>
+          )}
+          {Mrpprice && (
+            <span className="text-[10px] uppercase tracking-[0.2em] text-accent">
+              Sale
+            </span>
+          )}
+        </div>
+      </div>
     </Link>
   )
 }
